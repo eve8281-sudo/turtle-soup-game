@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UI方案A - 卡片沉浸風</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, 'Noto Sans TC', sans-serif; background: #0a0a0f; color: #eee; min-height:100vh; display:flex; justify-content:center; }
+.phone { width:390px; min-height:844px; background:#0a0a0f; position:relative; overflow:hidden; border:2px solid #333; border-radius:40px; margin:20px; }
+.status-bar { height:50px; display:flex; align-items:flex-end; justify-content:center; padding-bottom:8px; font-size:12px; color:#888; }
+
+/* Style A: Immersive card style with large hero */
+.hero-a {
+  padding: 30px 20px 20px;
+  text-align: center;
+  background: linear-gradient(180deg, #1a1030 0%, #0a0a0f 100%);
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+}
+.hero-a .icon { font-size: 80px; margin-bottom: 8px; filter: drop-shadow(0 0 20px rgba(108,92,231,0.5)); }
+.hero-a h1 { font-size: 36px; font-weight: 900; background: linear-gradient(135deg, #a29bfe, #6c5ce7, #00b894); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero-a p { color: #777; font-size: 13px; margin-top: 8px; line-height: 1.6; }
+
+.stats-a {
+  display: flex; gap: 0; margin: 20px 20px 0;
+  background: #16161f; border-radius: 16px; overflow: hidden;
+  border: 1px solid #2a2a3a;
+}
+.stats-a .s { flex:1; padding: 16px 0; text-align:center; }
+.stats-a .s + .s { border-left: 1px solid #2a2a3a; }
+.stats-a .n { font-size: 24px; font-weight: 800; color: #a29bfe; }
+.stats-a .l { font-size: 10px; color: #666; margin-top: 4px; }
+
+.play-btn-a {
+  margin: 20px; padding: 18px; border-radius: 20px;
+  background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+  text-align: center; font-size: 18px; font-weight: 700; color: white;
+  box-shadow: 0 8px 30px rgba(108,92,231,0.4);
+}
+
+.section-a { padding: 0 20px; margin-top: 24px; }
+.section-a h3 { font-size: 14px; color: #666; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 12px; }
+
+.diff-row-a { display: flex; gap: 10px; }
+.diff-card-a {
+  flex: 1; padding: 20px 12px; border-radius: 16px;
+  text-align: center; border: 1px solid #2a2a3a;
+  background: linear-gradient(180deg, #16161f, #0f0f18);
+}
+.diff-card-a .emoji { font-size: 28px; }
+.diff-card-a .name { font-size: 15px; font-weight: 700; margin-top: 8px; }
+.diff-card-a .sub { font-size: 11px; color: #666; margin-top: 4px; }
+
+.cat-scroll-a { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
+.cat-chip-a {
+  flex-shrink: 0; padding: 10px 18px; border-radius: 25px;
+  background: #16161f; border: 1px solid #2a2a3a;
+  font-size: 13px; white-space: nowrap;
+  display: flex; align-items: center; gap: 6px;
+}
+.cat-chip-a .e { font-size: 18px; }
+
+.nav-a {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  display: flex; justify-content: space-around;
+  padding: 12px 0 30px; background: rgba(10,10,15,0.95);
+  border-top: 1px solid #1a1a2a;
+}
+.nav-a .item { text-align:center; font-size:10px; color:#555; }
+.nav-a .item.active { color:#a29bfe; }
+.nav-a .item .ico { font-size:22px; margin-bottom:2px; }
+
+.label { position:fixed; top:10px; left:50%; transform:translateX(-50%); background:#6c5ce7; padding:8px 20px; border-radius:20px; font-size:14px; font-weight:700; z-index:999; }
+</style>
+</head>
+<body>
+<div class="label">方案 A：沉浸卡片風 + 底部導航</div>
+<div class="phone">
+  <div class="status-bar">9:41</div>
+  <div class="hero-a">
+    <div class="icon">🐢</div>
+    <h1>海龜湯</h1>
+    <p>一句話的謎題<br>用「是」或「否」揭開隱藏的湯底</p>
+  </div>
+  <div class="stats-a">
+    <div class="s"><div class="n">186</div><div class="l">題目總數</div></div>
+    <div class="s"><div class="n">12</div><div class="l">已解鎖</div></div>
+    <div class="s"><div class="n">6%</div><div class="l">完成率</div></div>
+  </div>
+  <div class="play-btn-a">🎲 隨機來一題</div>
+
+  <div class="section-a">
+    <h3>難度</h3>
+    <div class="diff-row-a">
+      <div class="diff-card-a"><div class="emoji">🟢</div><div class="name">短篇</div><div class="sub">70題</div></div>
+      <div class="diff-card-a"><div class="emoji">🟡</div><div class="name">中篇</div><div class="sub">65題</div></div>
+      <div class="diff-card-a"><div class="emoji">🔴</div><div class="name">長篇</div><div class="sub">51題</div></div>
+    </div>
+  </div>
+
+  <div class="section-a" style="margin-top:20px">
+    <h3>分類</h3>
+    <div class="cat-scroll-a">
+      <div class="cat-chip-a"><span class="e">🥰</span> 溫馨感人</div>
+      <div class="cat-chip-a"><span class="e">🔍</span> 推理</div>
+      <div class="cat-chip-a"><span class="e">👻</span> 恐怖驚悚</div>
+      <div class="cat-chip-a"><span class="e">😄</span> 搞笑</div>
+      <div class="cat-chip-a"><span class="e">😢</span> 悲傷</div>
+      <div class="cat-chip-a"><span class="e">💕</span> 愛情</div>
+    </div>
+  </div>
+
+  <div class="nav-a">
+    <div class="item active"><div class="ico">🏠</div>首頁</div>
+    <div class="item"><div class="ico">📚</div>題庫</div>
+    <div class="item"><div class="ico">🏆</div>成就</div>
+    <div class="item"><div class="ico">👤</div>我的</div>
+  </div>
+</div>
+</body>
+</html>

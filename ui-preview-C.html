@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UI方案C - 清新插畫風</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, 'Noto Sans TC', sans-serif; background: #0a0a0f; color: #eee; min-height:100vh; display:flex; justify-content:center; }
+.phone { width:390px; min-height:844px; background:#0f1923; position:relative; overflow:hidden; border:2px solid #333; border-radius:40px; margin:20px; }
+.status-bar { height:50px; }
+
+/* Style C: Clean, warm, story-driven */
+.header-c {
+  padding: 16px 20px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.header-c .logo { font-size: 20px; font-weight: 800; }
+.header-c .logo span { color: #ffd93d; }
+.header-c .avatar { width:36px; height:36px; border-radius:50%; background: linear-gradient(135deg, #6c5ce7, #a29bfe); display:flex; align-items:center; justify-content:center; font-size:16px; }
+
+.banner-c {
+  margin: 0 20px; padding: 24px;
+  background: linear-gradient(135deg, #1a2840, #0f1923);
+  border-radius: 24px; position: relative; overflow: hidden;
+  border: 1px solid rgba(255,217,61,0.15);
+}
+.banner-c .stars { position:absolute; top:10px; right:15px; font-size:30px; opacity:0.3; }
+.banner-c .welcome { font-size: 22px; font-weight: 800; line-height: 1.4; }
+.banner-c .welcome span { color: #ffd93d; }
+.banner-c .sub { font-size: 13px; color: #667; margin-top: 8px; }
+.banner-c .action {
+  margin-top: 16px; display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 24px; background: #ffd93d; color: #000; border-radius: 14px;
+  font-size: 14px; font-weight: 700;
+}
+
+.tabs-c {
+  display: flex; gap: 0; margin: 20px; background: #141e2b; border-radius: 14px; padding: 4px;
+}
+.tabs-c .tab {
+  flex:1; padding: 10px; text-align:center; border-radius: 12px;
+  font-size: 13px; font-weight: 600; color: #556;
+}
+.tabs-c .tab.active { background: #1e2d40; color: #ffd93d; }
+
+.story-cards-c { padding: 0 20px; }
+.story-card-c {
+  padding: 18px; margin-bottom: 12px;
+  background: #141e2b; border-radius: 18px;
+  border-left: 4px solid;
+  position: relative;
+}
+.story-card-c:nth-child(1) { border-color: #e17055; }
+.story-card-c:nth-child(2) { border-color: #6c5ce7; }
+.story-card-c:nth-child(3) { border-color: #00b894; }
+.story-card-c .meta {
+  display: flex; gap: 8px; margin-bottom: 8px;
+}
+.story-card-c .tag {
+  font-size: 11px; padding: 3px 10px; border-radius: 8px;
+}
+.story-card-c:nth-child(1) .tag { background: rgba(225,112,85,0.15); color: #e17055; }
+.story-card-c:nth-child(2) .tag { background: rgba(108,92,231,0.15); color: #a29bfe; }
+.story-card-c:nth-child(3) .tag { background: rgba(0,184,148,0.15); color: #00b894; }
+.story-card-c .preview {
+  font-size: 14px; line-height: 1.7; color: #889;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.story-card-c .bottom {
+  display: flex; justify-content: space-between; align-items: center; margin-top: 10px;
+}
+.story-card-c .diff { font-size: 11px; color: #556; }
+.story-card-c .play-icon { width:30px; height:30px; border-radius:50%; background:rgba(255,217,61,0.15); display:flex; align-items:center; justify-content:center; font-size:14px; }
+
+.quick-c {
+  padding: 20px;
+}
+.quick-c h3 { font-size: 14px; color: #556; margin-bottom: 12px; }
+.quick-row-c { display: flex; gap: 10px; }
+.quick-item-c {
+  flex:1; padding: 16px 8px; text-align:center;
+  background: #141e2b; border-radius: 16px;
+}
+.quick-item-c .e { font-size: 28px; }
+.quick-item-c .n { font-size: 12px; color: #889; margin-top: 6px; }
+.quick-item-c .c { font-size: 18px; font-weight: 800; color: #ffd93d; margin-top: 2px; }
+
+.label { position:fixed; top:10px; left:50%; transform:translateX(-50%); background:#ffd93d; padding:8px 20px; border-radius:20px; font-size:14px; font-weight:700; z-index:999; color:#000; }
+</style>
+</head>
+<body>
+<div class="label">方案 C：故事驅動風 + 暖色調</div>
+<div class="phone">
+  <div class="status-bar"></div>
+
+  <div class="header-c">
+    <div class="logo">🐢 海龜<span>湯</span></div>
+    <div class="avatar">🔍</div>
+  </div>
+
+  <div class="banner-c">
+    <div class="stars">✨🌙</div>
+    <div class="welcome">今晚<span>來解</span><br>一個謎題？</div>
+    <div class="sub">186道謎題等你挑戰</div>
+    <div class="action">🎲 隨機開始</div>
+  </div>
+
+  <div class="quick-c">
+    <h3>⚡ 快速開始</h3>
+    <div class="quick-row-c">
+      <div class="quick-item-c"><div class="e">🟢</div><div class="n">短篇</div><div class="c">70</div></div>
+      <div class="quick-item-c"><div class="e">🟡</div><div class="n">中篇</div><div class="c">65</div></div>
+      <div class="quick-item-c"><div class="e">🔴</div><div class="n">長篇</div><div class="c">51</div></div>
+      <div class="quick-item-c"><div class="e">⭐</div><div class="n">已解</div><div class="c">12</div></div>
+    </div>
+  </div>
+
+  <div class="tabs-c">
+    <div class="tab active">推薦</div>
+    <div class="tab">最新</div>
+    <div class="tab">熱門</div>
+    <div class="tab">分類</div>
+  </div>
+
+  <div class="story-cards-c">
+    <div class="story-card-c">
+      <div class="meta"><span class="tag">👻 恐怖驚悚</span></div>
+      <div class="preview">女子每晚睡前都會檢查床底，確認沒有人後才安心入睡。今天她檢查完，卻再也睡不著了。</div>
+      <div class="bottom"><span class="diff">短篇 · 簡單</span><div class="play-icon">▶</div></div>
+    </div>
+    <div class="story-card-c">
+      <div class="meta"><span class="tag">🧠 心理驚悚</span></div>
+      <div class="preview">心理醫師連續三個月治療一位聲稱被跟蹤的女性患者。今天他翻看病歷，發現患者的住址竟然是他自己家。</div>
+      <div class="bottom"><span class="diff">短篇 · 簡單</span><div class="play-icon">▶</div></div>
+    </div>
+    <div class="story-card-c">
+      <div class="meta"><span class="tag">🥰 溫馨感人</span></div>
+      <div class="preview">男孩每天放學都會送給路邊的流浪狗一塊麵包，有天他發現狗碗裡已經有一塊麵包了。</div>
+      <div class="bottom"><span class="diff">短篇 · 簡單</span><div class="play-icon">▶</div></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
