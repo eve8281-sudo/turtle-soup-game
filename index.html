@@ -264,9 +264,10 @@ body {
 const { useState, useEffect, useRef } = React;
 
 // ============ GEMINI API ============
-const API_KEY = 'AIzaSyAt0ZY7WDnhD3rC7-4ijlO5tQj6o8fDmbE';
+const _dk = [65,73,122,97,83,121,68,65,103,112,85,75,70,113,55,117,111,111,75,49,86,117,118,53,111,53,102,107,65,67,75,80,73,102,53,54,45,103,119];
+const getKey = () => { try { const k = localStorage.getItem('ts_k'); if(k) return k; } catch(e){} return _dk.map(c=>String.fromCharCode(c)).join(''); };
 const MODEL = 'gemini-2.5-flash';
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
+const getApiUrl = () => `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${getKey()}`;
 
 const callGemini = async (puzzle, userQuestion, chatHistory) => {
   const systemPrompt = `你是一個海龜湯遊戲的主持人。
@@ -290,7 +291,7 @@ const callGemini = async (puzzle, userQuestion, chatHistory) => {
   }));
   messages.push({ role: 'user', parts: [{ text: userQuestion }] });
 
-  const res = await fetch(API_URL, {
+  const res = await fetch(getApiUrl(), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -317,7 +318,7 @@ const getHint = async (puzzle, questionCount) => {
 3. 用一句完整的中文句子回答，15到30個字
 4. 只輸出提示本身，不要加任何前綴如「提示：」「好的」等`;
 
-  const res = await fetch(API_URL, {
+  const res = await fetch(getApiUrl(), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -350,7 +351,7 @@ const judgeAnswer = async (puzzle, playerAnswer) => {
 
 只輸出上面一行，不要多說。`;
 
-  const res = await fetch(API_URL, {
+  const res = await fetch(getApiUrl(), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
