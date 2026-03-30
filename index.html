@@ -301,7 +301,7 @@ const callGemini = async (puzzle, userQuestion, chatHistory) => {
   });
   const data = await res.json();
   if (data.error) throw new Error(data.error.message);
-  return data.candidates[0].content.parts[0].text;
+  const pp = data.candidates[0].content.parts; return pp.filter(p => p.text).pop().text;
 };
 
 const getHint = async (puzzle, questionCount) => {
@@ -327,7 +327,8 @@ const getHint = async (puzzle, questionCount) => {
   });
   const data = await res.json();
   if (data.error) throw new Error(data.error.message);
-  return data.candidates[0].content.parts[0].text;
+  const parts = data.candidates[0].content.parts;
+  return parts.filter(p => p.text).pop().text;
 };
 
 const judgeAnswer = async (puzzle, playerAnswer) => {
@@ -359,7 +360,7 @@ const judgeAnswer = async (puzzle, playerAnswer) => {
   });
   const data = await res.json();
   if (data.error) throw new Error(data.error.message);
-  return data.candidates[0].content.parts[0].text;
+  const pp = data.candidates[0].content.parts; return pp.filter(p => p.text).pop().text;
 };
 
 // ============ CATEGORY CONFIG ============
@@ -638,12 +639,18 @@ function GameScreen({ puzzle, onBack, onSolved }) {
         </div>
 
         {!revealed && !won && (
-          <div style={{display:'flex', gap:10, marginTop:10}}>
-            <button className="guess-btn" style={{background:'linear-gradient(135deg, #ffd93d, #f0c929)', color:'#000', flex:1}} onClick={() => setGuessMode(!guessMode)}>
-              🧠 {guessMode ? '取消猜答案' : '我知道答案了！'}
+          <div style={{display:'flex', gap:10, marginTop:10, alignItems:'stretch'}}>
+            <button onClick={() => setGuessMode(!guessMode)} style={{
+              flex:1, padding:'14px 16px', borderRadius:14, border:'none', fontSize:14, fontWeight:700,
+              background:'linear-gradient(135deg, #ffd93d, #f0c929)', color:'#000', cursor:'pointer', transition:'all 0.2s'
+            }}>
+              🧠 {guessMode ? '取消' : '我知道答案了'}
             </button>
-            <button className="guess-btn" style={{flex:'0 0 auto', padding:'15px 20px'}} onClick={() => { setRevealed(true); onSolved(puzzle.id); }}>
-              🔓 放棄
+            <button onClick={() => { setRevealed(true); onSolved(puzzle.id); }} style={{
+              padding:'14px 20px', borderRadius:14, border:'1px solid var(--border)', fontSize:14, fontWeight:600,
+              background:'var(--bg-card)', color:'var(--text2)', cursor:'pointer', transition:'all 0.2s'
+            }}>
+              🔓 揭曉
             </button>
           </div>
         )}
