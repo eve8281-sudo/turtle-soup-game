@@ -296,7 +296,7 @@ const callGemini = async (puzzle, userQuestion, chatHistory) => {
     body: JSON.stringify({
       system_instruction: { parts: [{ text: systemPrompt }] },
       contents: messages,
-      generationConfig: { temperature: 0.3, maxOutputTokens: 1024, responseMimeType: "text/plain" }
+      generationConfig: { temperature: 0.3, maxOutputTokens: 1024 }
     })
   });
   const data = await res.json();
@@ -322,7 +322,7 @@ const getHint = async (puzzle, questionCount) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.7, maxOutputTokens: 1024, responseMimeType: "text/plain" }
+      generationConfig: { temperature: 0.7, maxOutputTokens: 1024 }
     })
   });
   const data = await res.json();
@@ -355,7 +355,7 @@ const judgeAnswer = async (puzzle, playerAnswer) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.2, maxOutputTokens: 1024, responseMimeType: "text/plain" }
+      generationConfig: { temperature: 0.2, maxOutputTokens: 1024 }
     })
   });
   const data = await res.json();
