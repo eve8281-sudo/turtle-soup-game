@@ -330,6 +330,38 @@ const getHint = async (puzzle, questionCount) => {
   return data.candidates[0].content.parts[0].text;
 };
 
+const judgeAnswer = async (puzzle, playerAnswer) => {
+  const prompt = `你是海龜湯遊戲的裁判。
+
+湯面：${puzzle.question}
+湯底（正確答案）：${puzzle.answer}
+玩家的猜測：${playerAnswer}
+
+請判斷玩家的猜測是否接近正確答案。判斷標準：
+- 玩家不需要完全說出一模一樣的答案，只要猜到了核心真相或關鍵要素就算正確
+- 如果玩家猜到了大部分重點但有些細節不對，算「接近」
+- 如果完全偏離，算「錯誤」
+
+請用以下格式回答（只選一個）：
+🎉 正確！[一句話簡短說明為什麼對]
+🤏 很接近！[一句話說明哪裡對了，還差什麼]
+❌ 還沒猜到！[一句話簡短引導，不要透露答案]
+
+只輸出上面一行，不要多說。`;
+
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.2, maxOutputTokens: 1024, thinkingConfig: { thinkingBudget: 0 } }
+    })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  return data.candidates[0].content.parts[0].text;
+};
+
 // ============ CATEGORY CONFIG ============
 const CAT = {
   '溫馨感人': { emoji: '🥰', color: '#fdcb6e' },
@@ -490,12 +522,16 @@ function GameScreen({ puzzle, onBack, onSolved }) {
   const [revealed, setRevealed] = useState(false);
   const [hints, setHints] = useState([]);
   const [hintsUsed, setHintsUsed] = useState(0);
+  const [guessMode, setGuessMode] = useState(false);
+  const [guessInput, setGuessInput] = useState('');
+  const [guessResult, setGuessResult] = useState(null);
+  const [won, setWon] = useState(false);
   const chatRef = useRef(null);
   const maxHints = puzzle.difficulty === 'easy' ? 2 : puzzle.difficulty === 'medium' ? 3 : 4;
 
   useEffect(() => {
     if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
-  }, [messages, hints, loading]);
+  }, [messages, hints, loading, guessResult]);
 
   const parseAnswer = (text) => {
     const t = text.trim();
@@ -530,6 +566,30 @@ function GameScreen({ puzzle, onBack, onSolved }) {
       setHintsUsed(prev => prev + 1);
     } catch { setHints(prev => [...prev, '提示獲取失敗']); }
     setLoading(false);
+  };
+
+  const handleGuess = async () => {
+    const g = guessInput.trim();
+    if (!g || loading) return;
+    setLoading(true);
+    setGuessResult(null);
+    try {
+      const result = await judgeAnswer(puzzle, g);
+      setGuessResult(result);
+      setMessages(prev => [...prev,
+        { role: 'user', text: `【猜答案】${g}` },
+        { role: 'system', text: result, type: result.includes('🎉') ? 'yes' : result.includes('🤏') ? 'irrelevant' : 'no' }
+      ]);
+      if (result.includes('🎉')) {
+        setWon(true);
+        onSolved(puzzle.id);
+      }
+    } catch (err) {
+      setGuessResult(`出錯了：${err.message}`);
+    }
+    setLoading(false);
+    setGuessInput('');
+    setGuessMode(false);
   };
 
   const questionCount = messages.filter(m => m.role === 'user').length;
@@ -577,7 +637,65 @@ function GameScreen({ puzzle, onBack, onSolved }) {
           )}
         </div>
 
-        {!revealed && <button className="guess-btn" onClick={() => { setRevealed(true); onSolved(puzzle.id); }}>🔓 揭曉湯底</button>}
+        {!revealed && !won && (
+          <div style={{display:'flex', gap:10, marginTop:10}}>
+            <button className="guess-btn" style={{background:'linear-gradient(135deg, #ffd93d, #f0c929)', color:'#000', flex:1}} onClick={() => setGuessMode(!guessMode)}>
+              🧠 {guessMode ? '取消猜答案' : '我知道答案了！'}
+            </button>
+            <button className="guess-btn" style={{flex:'0 0 auto', padding:'15px 20px'}} onClick={() => { setRevealed(true); onSolved(puzzle.id); }}>
+              🔓 放棄
+            </button>
+          </div>
+        )}
+
+        {guessMode && !revealed && !won && (
+          <div style={{marginTop:12, animation:'fadeIn 0.3s ease'}}>
+            <div style={{fontSize:13, color:'var(--accent)', marginBottom:8, fontWeight:600}}>✍️ 寫下你認為的湯底：</div>
+            <div style={{display:'flex', gap:8}}>
+              <textarea
+                value={guessInput}
+                onChange={e => setGuessInput(e.target.value)}
+                placeholder="描述你猜到的真相..."
+                style={{
+                  flex:1, background:'var(--bg-card)', border:'1px solid var(--accent)',
+                  borderRadius:14, padding:'12px 16px', color:'var(--text)', fontSize:14,
+                  outline:'none', resize:'none', minHeight:80, fontFamily:'inherit', lineHeight:1.6
+                }}
+              />
+            </div>
+            <button
+              onClick={handleGuess}
+              disabled={loading || !guessInput.trim()}
+              style={{
+                width:'100%', marginTop:10, padding:14, borderRadius:12,
+                background: guessInput.trim() ? 'var(--accent)' : 'var(--border)',
+                border:'none', color:'#000', fontSize:15, fontWeight:700,
+                cursor: guessInput.trim() ? 'pointer' : 'not-allowed',
+                transition:'all 0.2s'
+              }}
+            >
+              {loading ? '判定中...' : '提交答案'}
+            </button>
+          </div>
+        )}
+
+        {won && !revealed && (
+          <div className="reveal-card" style={{marginTop:16, borderColor:'var(--yes)'}}>
+            <div className="reveal-label" style={{color:'var(--yes)'}}>🎉 恭喜猜對了！</div>
+            <div className="reveal-text">{puzzle.answer}</div>
+            <div style={{marginTop:12, fontSize:13, color:'var(--text2)'}}>
+              你用了 {questionCount} 次提問就猜到了答案！
+            </div>
+            <div className="reveal-actions">
+              <button className="reveal-btn secondary" onClick={onBack}>返回列表</button>
+              <button className="reveal-btn primary" onClick={() => {
+                const unsolved = PUZZLES.filter(p => p.id !== puzzle.id);
+                const next = unsolved[Math.floor(Math.random() * unsolved.length)];
+                if (next) { setMessages([]); setHints([]); setHintsUsed(0); setRevealed(false); setWon(false); setInput(''); setGuessMode(false); setGuessResult(null); window.__loadPuzzle?.(next); }
+              }}>下一題 →</button>
+            </div>
+          </div>
+        )}
 
         {revealed && (
           <div className="reveal-card">
@@ -588,14 +706,14 @@ function GameScreen({ puzzle, onBack, onSolved }) {
               <button className="reveal-btn primary" onClick={() => {
                 const unsolved = PUZZLES.filter(p => p.id !== puzzle.id);
                 const next = unsolved[Math.floor(Math.random() * unsolved.length)];
-                if (next) { setMessages([]); setHints([]); setHintsUsed(0); setRevealed(false); setInput(''); window.__loadPuzzle?.(next); }
+                if (next) { setMessages([]); setHints([]); setHintsUsed(0); setRevealed(false); setWon(false); setInput(''); setGuessMode(false); setGuessResult(null); window.__loadPuzzle?.(next); }
               }}>下一題 →</button>
             </div>
           </div>
         )}
       </div>
 
-      {!revealed && (
+      {!revealed && !won && !guessMode && (
         <div className="input-area">
           <div className="input-row">
             <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSend()} placeholder="輸入你的問題..." disabled={loading} />
